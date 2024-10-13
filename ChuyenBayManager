@@ -3,7 +3,6 @@ package service;
 import entity.ChuyenBay;
 import entity.PhiCong;
 import entity.TiepVien;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,10 +41,13 @@ public class ChuyenBayManager {
         String gioDiChuyen = scanner.nextLine();
         System.out.print("Nhập số ghế: ");
         int soGhe = scanner.nextInt();
+        System.out.println("Nhập tên hãng máy bay: ");
+        String hangMayBay = scanner.nextLine();hangMayBay = scanner.nextLine();
+        
 
-        ChuyenBay chuyenBay = new ChuyenBay(maChuyenBay, ngayGioBay, diemDen, gioDiChuyen, soGhe);
+        ChuyenBay chuyenBay = new ChuyenBay(maChuyenBay, ngayGioBay, diemDen, gioDiChuyen, soGhe, hangMayBay);
         chuyenBayList.add(chuyenBay);
-        writeChuyenBayToFile(); // Ghi vào tệp khi thêm chuyến bay
+        writeChuyenBayToFile();
         System.out.println("Thêm chuyến bay thành công!");
     }
 
@@ -56,16 +58,16 @@ public class ChuyenBayManager {
                         chuyenBay.getNgayGioBay() + "," +
                         chuyenBay.getDiemDen() + "," +
                         chuyenBay.getGioDiChuyen() + "," +
-                        chuyenBay.getSoGhe());
+                        chuyenBay.getSoGhe() + "," +
+                        chuyenBay.getHangMayBay());
+                        
                 writer.newLine();
 
-                // Ghi danh sách phi công
                 for (PhiCong phiCong : chuyenBay.getPhiCongList()) {
                     writer.write("P," + phiCong.getMaPhiCong() + "," + phiCong.getTenPhiCong());
                     writer.newLine();
                 }
 
-                // Ghi danh sách tiếp viên
                 for (TiepVien tiepVien : chuyenBay.getTiepVienList()) {
                     writer.write("T," + tiepVien.getMaTiepVien() + "," + tiepVien.getTenTiepVien());
                     writer.newLine();
@@ -75,23 +77,23 @@ public class ChuyenBayManager {
             System.out.println("Lỗi khi ghi thông tin chuyến bay: " + e.getMessage());
         }
     }
-
+    
     private void readChuyenBayFromFile() {
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
-                if (data.length == 5) {
-                    // Nếu là thông tin chuyến bay
+                if (data.length == 6) {
                     ChuyenBay chuyenBay = new ChuyenBay(
                             Integer.parseInt(data[0]),
                             data[1],
                             data[2],
                             data[3],
-                            Integer.parseInt(data[4])
+                            Integer.parseInt(data[4]),
+                            data[5]
                     );
                     chuyenBayList.add(chuyenBay);
-                    
+
                     // Đọc phi công
                     while ((line = reader.readLine()) != null && line.startsWith("P")) {
                         String[] phiCongData = line.split(",");
@@ -112,4 +114,5 @@ public class ChuyenBayManager {
             System.out.println("Lỗi khi đọc thông tin chuyến bay: " + e.getMessage());
         }
     }
+    
 }
