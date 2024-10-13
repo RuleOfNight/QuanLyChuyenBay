@@ -48,16 +48,16 @@ public class Main {
     public static void showMenu() {
         Scanner sc = new Scanner(System.in);
         int choice;
-
+    
         do {
-            System.out.println("\n=== Menu Chính ===");
+            System.out.println("\n=== Menu chính ===");
             System.out.println("1. Quản lý chuyến bay");
             System.out.println("2. Quản lý phi công");
             System.out.println("0. Thoát");
-
+    
             System.out.print("Nhập lựa chọn của bạn: ");
             choice = sc.nextInt();
-
+    
             switch (choice) {
                 case 1:
                     quanlychuyenbay();
@@ -72,13 +72,48 @@ public class Main {
                     System.out.println("Lựa chọn không hợp lệ. Vui lòng thử lại.");
             }
         } while (choice != 0);
-
+    
         sc.close();
     }
+    
 
+    public static void quanlychuyenbay() {
+        ChuyenBayManager chuyenBayManager = new ChuyenBayManager();
+        Scanner sc = new Scanner(System.in);
+        int choice;
+    
+        do {
+            System.out.println("\n=== Menu Quản lý Chuyến Bay ===");
+            System.out.println("1. Hiển thị chuyến bay");
+            System.out.println("2. Thêm chuyến bay");
+            System.out.println("3. Chỉnh sửa chuyến bay");
+            System.out.println("0. Quay lại menu chính");
+    
+            System.out.print("Nhập lựa chọn của bạn: ");
+            choice = sc.nextInt();
+    
+            switch (choice) {
+                case 1:
+                    chuyenBayManager.showChuyenBay();
+                    break;
+                case 2:
+                    chuyenBayManager.addChuyenBay();
+                    break;
+                case 3:
+
+                    break;
+                case 0:
+                    System.out.println("Quay lại menu chính.");
+                    break; // Thoát khỏi vòng lặp
+                default:
+                    System.out.println("Lựa chọn không hợp lệ. Vui lòng thử lại.");
+            }
+        } while (choice != 0);
+    }
+    
     public static void quanlyphicong() {
         PhiCongManager phiCongManager = new PhiCongManager();
-        Scanner sc= new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
         int choice;
     
         do {
@@ -86,11 +121,10 @@ public class Main {
             System.out.println("1. Hiển thị phi công");
             System.out.println("2. Thêm phi công");
             System.out.println("3. Chỉnh sửa phi công");
-            System.out.println("0. Thoát");
+            System.out.println("0. Quay lại menu chính");
     
             System.out.print("Nhập lựa chọn của bạn: ");
             choice = sc.nextInt();
-            sc.nextLine(); // Đọc dòng còn lại
     
             switch (choice) {
                 case 1:
@@ -103,51 +137,13 @@ public class Main {
                     phiCongManager.editPhiCong();
                     break;
                 case 0:
-                    break;
+                    System.out.println("Quay lại menu chính.");
+                    break; // Thoát khỏi vòng lặp
                 default:
                     System.out.println("Lựa chọn không hợp lệ. Vui lòng thử lại.");
             }
         } while (choice != 0);
-    
-        sc.close();
     }
     
-
-
-    public static void quanlychuyenbay() {
-        ChuyenBayManager chuyenBayManager = new ChuyenBayManager();
-        Scanner sc = new Scanner(System.in);
-        int choice;
-    
-        do {
-            System.out.println("\n=== Menu ===");
-            System.out.println("1. Hiển thị chuyến bay");
-            System.out.println("2. Thêm chuyến bay");
-            System.out.println("3. Chỉnh sửa chuyến bay");
-            System.out.println("0. Thoát");
-    
-            System.out.print("Nhập lựa chọn của bạn: ");
-            choice = sc.nextInt();
-            sc.nextLine(); // Đọc dòng còn lại
-    
-            switch (choice) {
-                case 1:
-                    chuyenBayManager.showChuyenBay();
-                    break;
-                case 2:
-                    chuyenBayManager.addChuyenBay();
-                    break;
-                case 3:
-                    // Thêm logic chỉnh sửa chuyến bay nếu cần
-                    break;
-                case 0:
-                    break;
-                default:
-                    System.out.println("Lựa chọn không hợp lệ. Vui lòng thử lại.");
-            }
-        } while (choice != 0);
-    
-        sc.close();
-    }
     
 }
