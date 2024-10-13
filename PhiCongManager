@@ -1,0 +1,94 @@
+package service;
+
+import entity.PhiCong;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class PhiCongManager {
+    private List<PhiCong> phiCongList = new ArrayList<>();
+    private Scanner scanner = new Scanner(System.in);
+    private final String FILE_PATH = "phicong.txt"; // Đường dẫn đến tệp lưu thông tin phi công
+
+    public PhiCongManager() {
+        readPhiCongFromFile(); // Đọc thông tin phi công từ tệp khi khởi tạo
+    }
+
+    public void showPhiCong() {
+        if (phiCongList.isEmpty()) {
+            System.out.println("Không có phi công nào.");
+            return;
+        }
+
+        System.out.println("\n=== Danh sách phi công ===");
+        for (PhiCong phiCong : phiCongList) {
+            System.out.println("Mã phi công: " + phiCong.getMaPhiCong() +
+                    ", Tên phi công: " + phiCong.getTenPhiCong());
+        }
+    }
+
+    public void addPhiCong() {
+        System.out.print("Nhập mã phi công: ");
+        int maPhiCong = scanner.nextInt();
+        scanner.nextLine(); // Đọc dòng còn lại
+        System.out.print("Nhập tên phi công: ");
+        String tenPhiCong = scanner.nextLine();
+
+        PhiCong phiCong = new PhiCong(maPhiCong, tenPhiCong);
+        phiCongList.add(phiCong);
+        writePhiCongToFile(); // Ghi vào tệp khi thêm phi công
+        System.out.println("Thêm phi công thành công!");
+    }
+
+    public void editPhiCong() {
+        System.out.print("Nhập mã phi công cần chỉnh sửa: ");
+        int maPhiCong = scanner.nextInt();
+        scanner.nextLine(); // Đọc dòng còn lại
+        PhiCong found = null;
+
+        for (PhiCong phiCong : phiCongList) {
+            if (phiCong.getMaPhiCong() == maPhiCong) {
+                found = phiCong;
+                break;
+            }
+        }
+
+        if (found != null) {
+            System.out.print("Nhập tên phi công mới: ");
+            String tenPhiCong = scanner.nextLine();
+
+            found.setTenPhiCong(tenPhiCong);
+            writePhiCongToFile(); // Ghi lại thông tin sau khi chỉnh sửa
+            System.out.println("Chỉnh sửa phi công thành công!");
+        } else {
+            System.out.println("Không tìm thấy phi công với mã đã nhập.");
+        }
+    }
+
+    private void writePhiCongToFile() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
+            for (PhiCong phiCong : phiCongList) {
+                writer.write(phiCong.getMaPhiCong() + "," + phiCong.getTenPhiCong());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Lỗi khi ghi thông tin phi công: " + e.getMessage());
+        }
+    }
+
+    private void readPhiCongFromFile() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length == 2) {
+                    PhiCong phiCong = new PhiCong(Integer.parseInt(data[0]), data[1]);
+                    phiCongList.add(phiCong);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Lỗi khi đọc thông tin phi công: " + e.getMessage());
+        }
+    }
+}
