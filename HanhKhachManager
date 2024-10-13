@@ -1,0 +1,117 @@
+
+package service;
+
+import entity.HanhKhach;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class HanhKhachManager {
+    private List<HanhKhach> hanhKhachList;
+    private final String filePath = "khachhang.txt"; // Đường dẫn tới file lưu trữ
+
+    public HanhKhachManager() {
+        hanhKhachList = new ArrayList<>();
+        loadHanhKhachFromFile();
+    }
+
+    // Phương thức tải khách hàng từ file
+    private void loadHanhKhachFromFile() {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 6) { // Kiểm tra số phần tử trong dòng
+                    int maKhachHang = Integer.parseInt(parts[0]);
+                    String tenKhachHang = parts[1];
+                    String soDienThoai = parts[2];
+                    String diaChi = parts[3];
+                    int maChuyenBay = Integer.parseInt(parts[4]);
+                    int maVe = Integer.parseInt(parts[5]);
+                    hanhKhachList.add(new HanhKhach(maKhachHang, tenKhachHang, soDienThoai, diaChi, maChuyenBay, maVe));
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Không thể đọc file khách hàng: " + e.getMessage());
+        }
+    }
+
+    // Phương thức lưu thông tin khách hàng vào file
+    private void saveHanhKhachToFile() {
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath, false), StandardCharsets.UTF_8))) {
+            for (HanhKhach hanhKhach : hanhKhachList) {
+                bw.write(hanhKhach.getMaKhachHang() + "," +
+                         hanhKhach.getTenKhachHang() + "," +
+                         hanhKhach.getSoDienThoai() + "," +
+                         hanhKhach.getDiaChi() + "," +
+                         hanhKhach.getMaChuyenBay() + "," +
+                         hanhKhach.getMaVe());
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Không thể lưu file khách hàng: " + e.getMessage());
+        }
+    }
+
+    // Phương thức thêm khách hàng
+    public void addHanhKhach(HanhKhach hanhKhach) {
+        hanhKhachList.add(hanhKhach);
+        saveHanhKhachToFile();
+        System.out.println("Thêm khách hàng thành công!");
+    }
+
+    // Phương thức hiển thị danh sách khách hàng
+    public void showHanhKhach() {
+        if (hanhKhachList.isEmpty()) {
+            System.out.println("Không có khách hàng nào.");
+            return;
+        }
+        System.out.println("\n=== Danh sách khách hàng ===");
+        for (HanhKhach hanhKhach : hanhKhachList) {
+            System.out.println("Mã khách hàng: " + hanhKhach.getMaKhachHang() +
+                    ", Tên khách hàng: " + hanhKhach.getTenKhachHang() +
+                    ", SĐT: " + hanhKhach.getSoDienThoai() +
+                    ", Địa chỉ: " + hanhKhach.getDiaChi() +
+                    ", Mã chuyến bay: " + hanhKhach.getMaChuyenBay() +
+                    ", Mã vé: " + hanhKhach.getMaVe());
+        }
+    }
+
+    // Phương thức chỉnh sửa thông tin khách hàng
+    public void editHanhKhach(int maKhachHang) {
+        for (HanhKhach hanhKhach : hanhKhachList) {
+            if (hanhKhach.getMaKhachHang() == maKhachHang) {
+                // Thực hiện chỉnh sửa thông tin
+                // Ví dụ: cập nhật tên khách hàng
+                Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8);
+                System.out.print("Nhập tên khách hàng mới: ");
+                String tenKhachHang = scanner.nextLine();
+                hanhKhach.setTenKhachHang(tenKhachHang);
+                saveHanhKhachToFile(); // Lưu lại thông tin sau khi chỉnh sửa
+                System.out.println("Chỉnh sửa khách hàng thành công!");
+                return;
+            }
+        }
+        System.out.println("Không tìm thấy khách hàng với mã đã nhập.");
+    }
+
+    // Phương thức xóa khách hàng
+    public void deleteHanhKhach(int maKhachHang) {
+        HanhKhach toDelete = null;
+        for (HanhKhach hanhKhach : hanhKhachList) {
+            if (hanhKhach.getMaKhachHang() == maKhachHang) {
+                toDelete = hanhKhach;
+                break;
+            }
+        }
+        if (toDelete != null) {
+            hanhKhachList.remove(toDelete);
+            saveHanhKhachToFile();
+            System.out.println("Xóa khách hàng thành công!");
+        } else {
+            System.out.println("Không tìm thấy khách hàng với mã đã nhập.");
+        }
+    }
+}
