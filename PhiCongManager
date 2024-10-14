@@ -174,9 +174,9 @@ public class PhiCongManager{
             
             String gioiTinh = "";
             while(true){
-                System.out.print("Nhập giới tính mới(Nam/Nữ, hiện tại: " + found.getGioiTinh() + "): ");
+                System.out.print("Nhập giới tính mới(Nam/Nu, hiện tại: " + found.getGioiTinh() + "): ");
                 gioiTinh = sc.nextLine();
-                if(!gioiTinh.equalsIgnoreCase("Nam") && !gioiTinh.equalsIgnoreCase("Nữ")){
+                if(!gioiTinh.equalsIgnoreCase("Nam") && !gioiTinh.equalsIgnoreCase("Nu")){
                     System.out.println("Giới tính không hợp lệ.");
                 } else{
                     break;
