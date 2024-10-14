@@ -8,16 +8,11 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
-
-
-
-
 public class TiepVienManager{
     private final List<TiepVien> tvlist = new ArrayList<>();
     private final Scanner sc = new Scanner(System.in);
     private final String FILE_PATH = "tiepvien.txt";
-    //Ra vào file tiepvien.txt
-    
+
     public TiepVienManager(){
         readTiepVienFromFile();
     }
@@ -34,7 +29,8 @@ public class TiepVienManager{
                     ", Tên tiếp viên: " + tiepVien.getTenTiepVien() +
                     ", Lương: " + tiepVien.getLuong() +
                     ", Ngày sinh: " + new SimpleDateFormat("dd/MM/yyyy").format(tiepVien.getNgaySinh()) +
-                    ", Giới tính: " + tiepVien.getGioiTinh());
+                    ", Giới tính: " + tiepVien.getGioiTinh() +
+                    ", Mã chuyến bay: " + tiepVien.getMaChuyenBay());
         }
     }
 
@@ -43,32 +39,31 @@ public class TiepVienManager{
         double luong = 0.0;
         String ngaySinh = "";
         String gioiTinh = "";
+        int maChuyenBay = 0;
 
-        // Kiếm tra mã tiếp viên
+        //ktra mã tiếp viên
         while(true){
             try{
                 System.out.print("Nhập mã tiếp viên: ");
                 maTiepVien = sc.nextInt();sc.nextLine();
 
-                // Kiểm tra mã có bị trùng lặp không
+                //ktra mã có bị trùng lặp không
                 if(timTiepVienTheoMa(maTiepVien) != null){
                     System.out.println("Mã tiếp viên đã tồn tại.");
                 } else{
                     break;
                 }
-            }catch(InputMismatchException e){
+            } catch(InputMismatchException e){
                 System.out.println("Mã tiếp viên phải là một số nguyên.");
-                sc.nextLine(); // Xóa dữ liệu lỗi còn lại trong scanner
+                sc.nextLine();
             }
         }
 
         // Nhập tên tiếp viên
         String tenTiepVien = "";
         while(tenTiepVien.trim().isEmpty()){
-
             System.out.print("Nhập tên tiếp viên: ");
             tenTiepVien = sc.nextLine();
-
             if(tenTiepVien.trim().isEmpty()){
                 System.out.println("Tên tiếp viên không được để trống.");
             }
@@ -81,13 +76,12 @@ public class TiepVienManager{
                 luong = sc.nextDouble();sc.nextLine();
                 break;
 
-            }catch(InputMismatchException e){
+            } catch(InputMismatchException e){
                 System.out.println("Lương phải là một số.");
-                sc.nextLine(); //Như cái trên
+                sc.nextLine();
             }
         }
 
-        // Nhập ngày sinh
         while(true){
             System.out.print("Nhập ngày sinh(dd/MM/yyyy): ");
             ngaySinh = sc.nextLine();
@@ -99,11 +93,9 @@ public class TiepVienManager{
             }
         }
 
-        // Nhập giới tính
         while(true){
             System.out.print("Nhập giới tính(Nam/Nữ): ");
             gioiTinh = sc.nextLine();
-            //ktra định dạng giới tính
             if(!gioiTinh.equalsIgnoreCase("Nam") && !gioiTinh.equalsIgnoreCase("Nữ")){
                 System.out.println("Giới tính không hợp lệ.");
             } else{
@@ -111,9 +103,21 @@ public class TiepVienManager{
             }
         }
 
-        TiepVien tv = new TiepVien(maTiepVien, tenTiepVien, luong, ngaySinh, gioiTinh);
+
+        while(true){
+            try{
+                System.out.print("Nhập mã chuyến bay: ");
+                maChuyenBay = sc.nextInt();sc.nextLine();
+                break;
+            } catch(InputMismatchException e){
+                System.out.println("Mã chuyến bay phải là một số nguyên.");
+                sc.nextLine();
+            }
+        }
+
+        TiepVien tv = new TiepVien(maTiepVien, tenTiepVien, luong, ngaySinh, gioiTinh, maChuyenBay);
         tvlist.add(tv);
-        writeTiepVienToFile(); // Ghi vào tệp tiếp viên
+        writeTiepVienToFile();
         System.out.println("Thêm tiếp viên thành công!");
     }
 
@@ -121,7 +125,6 @@ public class TiepVienManager{
         int maTiepVien = 0;
         boolean validInput = false;
 
-        // ktra mã tiếp viên
         while(!validInput){
             try{
                 System.out.print("Nhập mã tiếp viên cần chỉnh sửa: ");
@@ -137,7 +140,6 @@ public class TiepVienManager{
         TiepVien found = timTiepVienTheoMa(maTiepVien);
 
         if(found != null){
-            // Chỉnh sửa thông tin tiếp viên
             String tenTiepVien = "";
             while(tenTiepVien.trim().isEmpty()){
                 System.out.print("Nhập tên tiếp viên mới: ");
@@ -162,7 +164,8 @@ public class TiepVienManager{
         while(!validInput){
             try{
                 System.out.print("Nhập mã tiếp viên cần xóa: ");
-                maTiepVien = sc.nextInt();sc.nextLine();
+                maTiepVien = sc.nextInt();
+                sc.nextLine();
                 validInput = true;
 
             } catch(InputMismatchException e){
@@ -198,7 +201,8 @@ public class TiepVienManager{
                         tiepVien.getTenTiepVien() + "," +
                         tiepVien.getLuong() + "," +
                         new SimpleDateFormat("dd/MM/yyyy").format(tiepVien.getNgaySinh()) + "," +
-                        tiepVien.getGioiTinh());
+                        tiepVien.getGioiTinh() + "," +
+                        tiepVien.getMaChuyenBay());
                 writer.newLine();
             }
         } catch(IOException e){
@@ -211,14 +215,15 @@ public class TiepVienManager{
             String line;
             while((line = reader.readLine()) != null){
                 String[] data = line.split(",");
-                if(data.length == 5){
+                if(data.length == 6){
                     try{
                         TiepVien tiepVien = new TiepVien(
                                 Integer.parseInt(data[0]),     // Mã tiếp viên
                                 data[1],                       // Tên tiếp viên
-                                Double.parseDouble(data[2]),   // Phí sinh tồn
+                                Double.parseDouble(data[2]),   // Lương
                                 data[3],                       // Ngày sinh
-                                data[4]                        // Giới tính
+                                data[4],                       // Giới tính
+                                Integer.parseInt(data[5])      // Mã chuyến bay
                         );
                         tvlist.add(tiepVien);
                     } catch(NumberFormatException e){
