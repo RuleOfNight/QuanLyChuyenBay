@@ -1,0 +1,233 @@
+package service;
+
+import entity.TiepVien;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.List;
+import java.util.Scanner;
+
+
+
+
+
+public class TiepVienManager{
+    private final List<TiepVien> tvlist = new ArrayList<>();
+    private final Scanner sc = new Scanner(System.in);
+    private final String FILE_PATH = "tiepvien.txt";
+    //Ra vào file tiepvien.txt
+    
+    public TiepVienManager(){
+        readTiepVienFromFile();
+    }
+
+    public void showTiepVien(){
+        if(tvlist.isEmpty()){
+            System.out.println("Không có tiếp viên nào.");
+            return;
+        }
+
+        System.out.println("\n=== Danh sách tiếp viên ===");
+        for(TiepVien tiepVien : tvlist){
+            System.out.println("Mã tiếp viên: " + tiepVien.getMaTiepVien() +
+                    ", Tên tiếp viên: " + tiepVien.getTenTiepVien() +
+                    ", Lương: " + tiepVien.getLuong() +
+                    ", Ngày sinh: " + new SimpleDateFormat("dd/MM/yyyy").format(tiepVien.getNgaySinh()) +
+                    ", Giới tính: " + tiepVien.getGioiTinh());
+        }
+    }
+
+    public void addTiepVien(){
+        int maTiepVien = 0;
+        double luong = 0.0;
+        String ngaySinh = "";
+        String gioiTinh = "";
+
+        // Kiếm tra mã tiếp viên
+        while(true){
+            try{
+                System.out.print("Nhập mã tiếp viên: ");
+                maTiepVien = sc.nextInt();sc.nextLine();
+
+                // Kiểm tra mã có bị trùng lặp không
+                if(timTiepVienTheoMa(maTiepVien) != null){
+                    System.out.println("Mã tiếp viên đã tồn tại.");
+                } else{
+                    break;
+                }
+            }catch(InputMismatchException e){
+                System.out.println("Mã tiếp viên phải là một số nguyên.");
+                sc.nextLine(); // Xóa dữ liệu lỗi còn lại trong scanner
+            }
+        }
+
+        // Nhập tên tiếp viên
+        String tenTiepVien = "";
+        while(tenTiepVien.trim().isEmpty()){
+
+            System.out.print("Nhập tên tiếp viên: ");
+            tenTiepVien = sc.nextLine();
+
+            if(tenTiepVien.trim().isEmpty()){
+                System.out.println("Tên tiếp viên không được để trống.");
+            }
+        }
+
+        // Nhập lương
+        while(true){
+            try{
+                System.out.print("Nhập lương tiếp viên: ");
+                luong = sc.nextDouble();sc.nextLine();
+                break;
+
+            }catch(InputMismatchException e){
+                System.out.println("Lương phải là một số.");
+                sc.nextLine(); //Như cái trên
+            }
+        }
+
+        // Nhập ngày sinh
+        while(true){
+            System.out.print("Nhập ngày sinh(dd/MM/yyyy): ");
+            ngaySinh = sc.nextLine();
+            //ktra định dạng ngày sinh
+            if(!ngaySinh.matches("\\d{2}/\\d{2}/\\d{4}")){
+                System.out.println("Định dạng ngày sinh không hợp lệ.");
+            } else{
+                break;
+            }
+        }
+
+        // Nhập giới tính
+        while(true){
+            System.out.print("Nhập giới tính(Nam/Nữ): ");
+            gioiTinh = sc.nextLine();
+            //ktra định dạng giới tính
+            if(!gioiTinh.equalsIgnoreCase("Nam") && !gioiTinh.equalsIgnoreCase("Nữ")){
+                System.out.println("Giới tính không hợp lệ.");
+            } else{
+                break;
+            }
+        }
+
+        TiepVien tv = new TiepVien(maTiepVien, tenTiepVien, luong, ngaySinh, gioiTinh);
+        tvlist.add(tv);
+        writeTiepVienToFile(); // Ghi vào tệp tiếp viên
+        System.out.println("Thêm tiếp viên thành công!");
+    }
+
+    public void editTiepVien(){
+        int maTiepVien = 0;
+        boolean validInput = false;
+
+        // ktra mã tiếp viên
+        while(!validInput){
+            try{
+                System.out.print("Nhập mã tiếp viên cần chỉnh sửa: ");
+                maTiepVien = sc.nextInt();sc.nextLine();
+                validInput = true;
+
+            } catch(InputMismatchException e){
+                System.out.println("Mã tiếp viên phải là một số nguyên.");
+                sc.nextLine();
+            }
+        }
+
+        TiepVien found = timTiepVienTheoMa(maTiepVien);
+
+        if(found != null){
+            // Chỉnh sửa thông tin tiếp viên
+            String tenTiepVien = "";
+            while(tenTiepVien.trim().isEmpty()){
+                System.out.print("Nhập tên tiếp viên mới: ");
+                tenTiepVien = sc.nextLine();
+                if(tenTiepVien.trim().isEmpty()){
+                    System.out.println("Tên tiếp viên không được để trống.");
+                }
+            }
+
+            found.setTenTiepVien(tenTiepVien);
+            writeTiepVienToFile();
+            System.out.println("Chỉnh sửa tiếp viên thành công!");
+        } else{
+            System.out.println("Không tìm thấy tiếp viên với mã đã nhập.");
+        }
+    }
+
+    public void deleteTiepVien(){
+        int maTiepVien = 0;
+        boolean validInput = false;
+
+        while(!validInput){
+            try{
+                System.out.print("Nhập mã tiếp viên cần xóa: ");
+                maTiepVien = sc.nextInt();sc.nextLine();
+                validInput = true;
+
+            } catch(InputMismatchException e){
+                System.out.println("Mã tiếp viên phải là một số nguyên.");
+                sc.nextLine();
+            }
+        }
+
+        TiepVien found = timTiepVienTheoMa(maTiepVien);
+
+        if(found != null){
+            tvlist.remove(found);
+            writeTiepVienToFile();
+            System.out.println("Xóa tiếp viên thành công!");
+        } else{
+            System.out.println("Không tìm thấy tiếp viên với mã đã nhập.");
+        }
+    }
+
+    public TiepVien timTiepVienTheoMa(int maTiepVien){
+        for(TiepVien tiepVien : tvlist){
+            if(tiepVien.getMaTiepVien() == maTiepVien){
+                return tiepVien;
+            }
+        }
+        return null;
+    }
+
+    private void writeTiepVienToFile(){
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))){
+            for(TiepVien tiepVien : tvlist){
+                writer.write(tiepVien.getMaTiepVien() + "," +
+                        tiepVien.getTenTiepVien() + "," +
+                        tiepVien.getLuong() + "," +
+                        new SimpleDateFormat("dd/MM/yyyy").format(tiepVien.getNgaySinh()) + "," +
+                        tiepVien.getGioiTinh());
+                writer.newLine();
+            }
+        } catch(IOException e){
+            System.out.println("Lỗi khi ghi thông tin tiếp viên: " + e.getMessage());
+        }
+    }
+
+    private void readTiepVienFromFile(){
+        try(BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))){
+            String line;
+            while((line = reader.readLine()) != null){
+                String[] data = line.split(",");
+                if(data.length == 5){
+                    try{
+                        TiepVien tiepVien = new TiepVien(
+                                Integer.parseInt(data[0]),     // Mã tiếp viên
+                                data[1],                       // Tên tiếp viên
+                                Double.parseDouble(data[2]),   // Phí sinh tồn
+                                data[3],                       // Ngày sinh
+                                data[4]                        // Giới tính
+                        );
+                        tvlist.add(tiepVien);
+                    } catch(NumberFormatException e){
+                        System.out.println("Lỗi định dạng mã tiếp viên hoặc lương trong tệp: " + line);
+                    }
+                }
+            }
+        } catch(IOException e){
+            System.out.println("Lỗi khi đọc thông tin tiếp viên: " + e.getMessage());
+        }
+    }
+}
