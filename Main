@@ -184,18 +184,18 @@ public class Main{
             switch (choice){
                 case 1 -> hk.showHanhKhach();
                 case 2 -> {
-                    System.out.print("Nhập mã khách hàng: ");
-                    int maKhachHang = sc.nextInt();sc.nextLine();
-                    System.out.print("Nhập tên khách hàng: ");
-                    String tenKhachHang = sc.nextLine();
-                    System.out.print("Nhập số điện thoại: ");
-                    String soDienThoai = sc.nextLine();
-                    System.out.print("Nhập địa chỉ: ");
-                    String diaChi = sc.nextLine();
-                    System.out.print("Nhập mã chuyến bay: ");
-                    int maChuyenBay = sc.nextInt();
-                    System.out.print("Nhập mã vé: ");
-                    int maVe = sc.nextInt();
+                    System.out.print("Nhập mã khách hàng: ");        int maKhachHang = sc.nextInt();sc.nextLine();
+
+                    System.out.print("Nhập tên khách hàng: ");       String tenKhachHang = sc.nextLine();
+
+                    System.out.print("Nhập số điện thoại: ");        String soDienThoai = sc.nextLine();
+
+                    System.out.print("Nhập địa chỉ: ");              String diaChi = sc.nextLine();
+
+                    System.out.print("Nhập mã chuyến bay: ");        int maChuyenBay = sc.nextInt();
+
+                    System.out.print("Nhập mã vé: ");                int maVe = sc.nextInt();
+
     
                     HanhKhach hanhKhach = new HanhKhach(maKhachHang, tenKhachHang, soDienThoai, diaChi, maChuyenBay, maVe);
                     hk.addHanhKhach(hanhKhach);
@@ -216,7 +216,7 @@ public class Main{
         } while (choice != 0);
     }
     }
-     
+
 }
 
 
