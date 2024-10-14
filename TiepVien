@@ -10,20 +10,23 @@ public class TiepVien{
     private double luong;
     private Date ngaySinh;
     private String gioiTinh;
+    private int maChuyenBay;
 
-    public TiepVien(int maTiepVien, String tenTiepVien, double luong, String ngaySinh, String gioiTinh){
+    public TiepVien(int maTiepVien, String tenTiepVien, double luong, String ngaySinh, String gioiTinh, int maChuyenBay){
         this.maTiepVien = maTiepVien;
         this.tenTiepVien = tenTiepVien;
         this.luong = luong;
         this.gioiTinh = gioiTinh;
+        this.maChuyenBay = maChuyenBay;
         try{
             this.ngaySinh = new SimpleDateFormat("dd/MM/yyyy").parse(ngaySinh);
-        } catch(ParseException e){
+        } catch (ParseException e){
             e.printStackTrace();
         }
     }
 
     public TiepVien(int maTiepVien, String tiepVienDatum){
+
     }
 
     public int getMaTiepVien(){
@@ -46,6 +49,10 @@ public class TiepVien{
         return gioiTinh;
     }
 
+    public int getMaChuyenBay(){
+        return maChuyenBay;
+    }
+
     public void setTenTiepVien(String tenTiepVien){
         this.tenTiepVien = tenTiepVien;
     }
@@ -57,12 +64,16 @@ public class TiepVien{
     public void setNgaySinh(String ngaySinh){
         try{
             this.ngaySinh = new SimpleDateFormat("dd/MM/yyyy").parse(ngaySinh);
-        } catch(ParseException e){
+        } catch (ParseException e){
             e.printStackTrace();
         }
     }
 
     public void setGioiTinh(String gioiTinh){
         this.gioiTinh = gioiTinh;
+    }
+
+    public void setMaChuyenBay(int maChuyenBay){
+        this.maChuyenBay = maChuyenBay;
     }
 }
