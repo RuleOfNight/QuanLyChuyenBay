@@ -5,14 +5,21 @@ import entity.PhiCong;
 import entity.TiepVien;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
+
+
+
 
 public class ChuyenBayManager{
     private final List<ChuyenBay> cblist = new ArrayList<>();
+    private final HashSet<Integer> selectedTiepVienIds = new HashSet<>();
+    private final HashSet<Integer> selectedPhiCongIds = new HashSet<>();
     private final Scanner sc = new Scanner(System.in);
-    //Ra vào file chuyenbay.txt
     private final String FILE_PATH = "chuyenbay.txt";
+    private final Random random = new Random();
 
     public ChuyenBayManager(){
         readChuyenBayFromFile();
@@ -27,29 +34,86 @@ public class ChuyenBayManager{
         System.out.println("\n=== Danh sách chuyến bay ===");
         for(ChuyenBay chuyenBay : cblist){
             chuyenBay.displayChuyenBayInfo();
+            List<TiepVien> randomTiepVien = getRandomTiepVien(chuyenBay.getTiepVienList(), 4);
+            List<PhiCong> randomPhiCong = getRandomPhiCong(chuyenBay.getPhiCongList(), 2);
+            System.out.println("Tiếp viên phục vụ:");
+            for(TiepVien tv : randomTiepVien){
+                System.out.println(tv.getTenTiepVien());
+                selectedTiepVienIds.add(tv.getMaTiepVien());
+            }
+            System.out.println("Phi công điều khiển:");
+            for(PhiCong pc : randomPhiCong){
+                System.out.println(pc.getTenPhiCong());
+                selectedPhiCongIds.add(pc.getMaPhiCong());
+            }
         }
     }
 
     public void addChuyenBay(){
-        System.out.print("Nhập mã chuyến bay: ");      int maChuyenBay = sc.nextInt();sc.nextLine();
-        
+        System.out.print("Nhập mã chuyến bay: ");      int maChuyenBay = sc.nextInt(); sc.nextLine();
         System.out.print("Nhập ngày giờ bay: ");       String ngayGioBay = sc.nextLine();
-        
         System.out.print("Nhập điểm đến: ");           String diemDen = sc.nextLine();
-        
         System.out.print("Nhập giờ di chuyển: ");      String gioDiChuyen = sc.nextLine();
-        
         System.out.print("Nhập số ghế: ");             int soGhe = sc.nextInt();
-        
-        System.out.println("Nhập tên hãng máy bay: "); String hangMayBay = sc.nextLine();hangMayBay = sc.nextLine();
-        
-        
+        System.out.println("Nhập tên hãng máy bay: "); String hangMayBay = sc.nextLine(); hangMayBay = sc.nextLine();
 
         ChuyenBay chuyenBay = new ChuyenBay(maChuyenBay, ngayGioBay, diemDen, gioDiChuyen, soGhe, hangMayBay);
         cblist.add(chuyenBay);
         writeChuyenBayToFile();
         System.out.println("Thêm chuyến bay thành công!");
+    }
 
+    public void editChuyenBay() {
+        System.out.print("Nhập mã chuyến bay cần chỉnh sửa: ");
+        int maChuyenBay = sc.nextInt();
+        sc.nextLine();
+        
+        ChuyenBay chuyenBayCanSua = null;
+    
+        // Tìm chuyến bay cần chỉnh sửa
+        for (ChuyenBay cb : cblist) {
+            if (cb.getMaChuyenBay() == maChuyenBay) {
+                chuyenBayCanSua = cb;
+                break;
+            }
+        }
+    
+        if (chuyenBayCanSua == null) {
+            System.out.println("Không tìm thấy chuyến bay với mã này.");
+        } else {
+            System.out.print("Nhập ngày giờ bay mới (để trống nếu không muốn thay đổi): ");
+            String ngayGioBayMoi = sc.nextLine();
+            if (!ngayGioBayMoi.isEmpty()) {
+                chuyenBayCanSua.setNgayGioBay(ngayGioBayMoi);
+            }
+    
+            System.out.print("Nhập điểm đến mới (để trống nếu không muốn thay đổi): ");
+            String diemDenMoi = sc.nextLine();
+            if (!diemDenMoi.isEmpty()) {
+                chuyenBayCanSua.setDiemDen(diemDenMoi);
+            }
+    
+            System.out.print("Nhập giờ di chuyển mới (để trống nếu không muốn thay đổi): ");
+            String gioDiChuyenMoi = sc.nextLine();
+            if (!gioDiChuyenMoi.isEmpty()) {
+                chuyenBayCanSua.setGioDiChuyen(gioDiChuyenMoi);
+            }
+    
+            System.out.print("Nhập số ghế mới (để trống nếu không muốn thay đổi): ");
+            String soGheMoi = sc.nextLine();
+            if (!soGheMoi.isEmpty()) {
+                chuyenBayCanSua.setSoGhe(Integer.parseInt(soGheMoi));
+            }
+    
+            System.out.print("Nhập tên hãng máy bay mới (để trống nếu không muốn thay đổi): ");
+            String hangMayBayMoi = sc.nextLine();
+            if (!hangMayBayMoi.isEmpty()) {
+                chuyenBayCanSua.setHangMayBay(hangMayBayMoi);
+            }
+    
+            System.out.println("Chỉnh sửa chuyến bay thành công.");
+            writeChuyenBayToFile();
+        }
     }
 
     private void writeChuyenBayToFile(){
@@ -61,7 +125,6 @@ public class ChuyenBayManager{
                         chuyenBay.getGioDiChuyen() + "," +
                         chuyenBay.getSoGhe() + "," +
                         chuyenBay.getHangMayBay());
-                        
                 writer.newLine();
 
                 for(PhiCong phiCong : chuyenBay.getPhiCongList()){
@@ -79,10 +142,6 @@ public class ChuyenBayManager{
         }
     }
 
-
-    //                   Lấy thông tin chuyến bay từ file
-
-
     private void readChuyenBayFromFile(){
         try(BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))){
             String line;
@@ -90,23 +149,21 @@ public class ChuyenBayManager{
                 String[] data = line.split(",");
                 if(data.length == 6){
                     ChuyenBay chuyenBay = new ChuyenBay(
-                            Integer.parseInt(data[0]),          //Mã chuyến bay
-                            data[1],                            //Ngày giờ bay
-                            data[2],                            //Điểm đến
-                            data[3],                            //TG di chuyển
-                            Integer.parseInt(data[4]),          //Số ghế
-                            data[5]                             //Hãng
+                            Integer.parseInt(data[0]),
+                            data[1],
+                            data[2],
+                            data[3],
+                            Integer.parseInt(data[4]),
+                            data[5]
                     );
                     cblist.add(chuyenBay);
 
-                    //Đọc phi công
                     while((line = reader.readLine()) != null && line.startsWith("P")){
                         String[] phiCongData = line.split(",");
                         PhiCong pc = new PhiCong(Integer.parseInt(phiCongData[1]), phiCongData[2]);
                         chuyenBay.addPhiCong(pc);
                     }
 
-                    //Đọc tiếp viên
                     while(line != null && line.startsWith("T")){
                         String[] tiepVienData = line.split(",");
                         TiepVien tv = new TiepVien(Integer.parseInt(tiepVienData[1]), tiepVienData[2]);
@@ -116,8 +173,41 @@ public class ChuyenBayManager{
                 }
             }
         } catch(IOException e){
-            System.out.println("Lỗi khi đọc thông tin chuyến bay: " + e.getMessage());
+            System.out.println("Lỗi: " + e.getMessage());
         }
     }
-    
+
+    private List<TiepVien> getRandomTiepVien(List<TiepVien> list, int count){
+        List<TiepVien> selected = new ArrayList<>();
+        List<TiepVien> availableList = new ArrayList<>();
+        
+        for(TiepVien tv : list){
+            if(!selectedTiepVienIds.contains(tv.getMaTiepVien())){
+                availableList.add(tv);
+            }
+        }
+        
+        for(int i = 0; i < Math.min(count, availableList.size()); i++){
+            int index = random.nextInt(availableList.size());
+            selected.add(availableList.remove(index));
+        }
+        return selected;
+    }
+
+    private List<PhiCong> getRandomPhiCong(List<PhiCong> list, int count){
+        List<PhiCong> selected = new ArrayList<>();
+        List<PhiCong> availableList = new ArrayList<>();
+        
+        for(PhiCong pc : list){
+            if(!selectedPhiCongIds.contains(pc.getMaPhiCong())){
+                availableList.add(pc);
+            }
+        }
+        
+        for(int i = 0; i < Math.min(count, availableList.size()); i++){
+            int index = random.nextInt(availableList.size());
+            selected.add(availableList.remove(index));
+        }
+        return selected;
+    }
 }
