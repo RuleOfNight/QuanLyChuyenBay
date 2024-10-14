@@ -1,94 +1,279 @@
 package service;
-
 import entity.PhiCong;
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
-public class PhiCongManager {
-    private List<PhiCong> phiCongList = new ArrayList<>();
-    private Scanner scanner = new Scanner(System.in);
-    private final String FILE_PATH = "phicong.txt"; // Đường dẫn đến tệp lưu thông tin phi công
+public class PhiCongManager{
+    private final List<PhiCong> pclist = new ArrayList<>();
+    private final Scanner sc = new Scanner(System.in);
+    private final String FILE_PATH = "phicong.txt";
 
-    public PhiCongManager() {
-        readPhiCongFromFile(); // Đọc thông tin phi công từ tệp khi khởi tạo
+    //Ra vào file phicong.txt
+    public PhiCongManager(){
+        readPhiCongFromFile();
     }
-
-    public void showPhiCong() {
-        if (phiCongList.isEmpty()) {
+    public void showPhiCong(){
+        if(pclist.isEmpty()){
             System.out.println("Không có phi công nào.");
             return;
         }
 
+        
         System.out.println("\n=== Danh sách phi công ===");
-        for (PhiCong phiCong : phiCongList) {
+        for(PhiCong phiCong : pclist){
             System.out.println("Mã phi công: " + phiCong.getMaPhiCong() +
-                    ", Tên phi công: " + phiCong.getTenPhiCong());
+                    ", Tên phi công: " + phiCong.getTenPhiCong() +
+                    ", Lương: " + phiCong.getLuong() +
+                    ", Ngày sinh: " + new SimpleDateFormat("dd/MM/yyyy").format(phiCong.getNgaySinh()) +
+                    ", Giới tính: " + phiCong.getGioiTinh());
         }
     }
 
-    public void addPhiCong() {
-        System.out.print("Nhập mã phi công: ");
-        int maPhiCong = scanner.nextInt();
-        scanner.nextLine(); // Đọc dòng còn lại
-        System.out.print("Nhập tên phi công: ");
-        String tenPhiCong = scanner.nextLine();
 
-        PhiCong phiCong = new PhiCong(maPhiCong, tenPhiCong);
-        phiCongList.add(phiCong);
-        writePhiCongToFile(); // Ghi vào tệp khi thêm phi công
+    public void addPhiCong(){
+        int maPhiCong = 0;
+        double luong = 0.0;
+        String ngaySinh = "";
+        String gioiTinh = "";
+
+        // Nhập mã phi công
+        while(true){
+            try{
+                System.out.print("Nhập mã phi công: ");
+                maPhiCong = sc.nextInt();sc.nextLine();
+                break;
+
+            } catch(InputMismatchException e){
+                System.out.println("Mã phi công phải là một số nguyên.");
+                sc.nextLine(); // Xóa dữ liệu lỗi còn lại trong scanner
+            }
+        }
+
+        // Nhập tên phi công
+        String tenPhiCong = "";
+        while(tenPhiCong.trim().isEmpty()){
+            System.out.print("Nhập tên phi công: ");
+            tenPhiCong = sc.nextLine();
+            if(tenPhiCong.trim().isEmpty()){
+                System.out.println("Tên phi công không được để trống.");
+            }
+        }
+
+        // Nhập lương
+        while(true){
+            try{
+                System.out.print("Nhập lương phi công: ");
+                luong = sc.nextDouble();sc.nextLine();
+                break;
+            } catch(InputMismatchException e){
+                System.out.println("Lương phải là một số.");
+                sc.nextLine();
+            }
+        }
+
+        // Nhập ngày sinh
+        while(true){
+            System.out.print("Nhập ngày sinh(dd/MM/yyyy): ");
+            ngaySinh = sc.nextLine();
+            //ktra định dạng ngày tháng năm
+            if(!ngaySinh.matches("\\d{2}/\\d{2}/\\d{4}")){
+                System.out.println("Định dạng ngày sinh không hợp lệ.");
+            } else{
+                break;
+            }
+        }
+
+        // Nhập giới tính
+        while(true){
+            System.out.print("Nhập giới tính(Nam/Nữ): ");
+            gioiTinh = sc.nextLine();
+            
+            if(!gioiTinh.equalsIgnoreCase("Nam") && !gioiTinh.equalsIgnoreCase("Nữ")){
+                System.out.println("Giới tính không hợp lệ.");
+            } else{
+                break;
+            }
+        }
+
+
+        PhiCong phiCong = new PhiCong(maPhiCong, tenPhiCong, luong, ngaySinh, gioiTinh);
+        pclist.add(phiCong);
+        writePhiCongToFile();
         System.out.println("Thêm phi công thành công!");
     }
 
-    public void editPhiCong() {
-        System.out.print("Nhập mã phi công cần chỉnh sửa: ");
-        int maPhiCong = scanner.nextInt();
-        scanner.nextLine(); // Đọc dòng còn lại
-        PhiCong found = null;
 
-        for (PhiCong phiCong : phiCongList) {
-            if (phiCong.getMaPhiCong() == maPhiCong) {
+    public void editPhiCong(){
+        int maPhiCong = 0;
+        boolean validInput = false;
+
+        //ktra mã phi công
+        while(!validInput){
+            try{
+                System.out.print("Nhập mã phi công cần chỉnh sửa: ");
+                maPhiCong = sc.nextInt();sc.nextLine();
+                validInput = true;
+
+            } catch(InputMismatchException e){
+                System.out.println("Mã phi công phải là một số nguyên.");
+                sc.nextLine();
+            }
+        }
+
+        PhiCong found = null;
+        for(PhiCong phiCong : pclist){
+            if(phiCong.getMaPhiCong() == maPhiCong){
                 found = phiCong;
                 break;
             }
         }
 
-        if (found != null) {
-            System.out.print("Nhập tên phi công mới: ");
-            String tenPhiCong = scanner.nextLine();
-
+        if(found != null){
+            String tenPhiCong = "";
+            while(tenPhiCong.trim().isEmpty()){
+                System.out.print("Nhập tên phi công mới(hiện tại: " + found.getTenPhiCong() + "): ");
+                tenPhiCong = sc.nextLine();
+                if(tenPhiCong.trim().isEmpty()){
+                    System.out.println("Tên phi công không được để trống.");
+                }
+            }
             found.setTenPhiCong(tenPhiCong);
-            writePhiCongToFile(); // Ghi lại thông tin sau khi chỉnh sửa
+
+
+            double luong = 0.0;
+            while(true){
+                try{
+                    System.out.print("Nhập lương phi công mới(hiện tại: " + found.getLuong() + "): ");
+                    luong = sc.nextDouble();sc.nextLine();
+                    break;
+                
+                } catch(InputMismatchException e){
+                    System.out.println("Lương phải là một số.");
+                    sc.nextLine();
+                }
+            }
+            found.setLuong(luong);
+
+            
+            String ngaySinh = "";
+            while(true){
+                System.out.print("Nhập ngày sinh mới(dd/MM/yyyy, hiện tại: " + new SimpleDateFormat("dd/MM/yyyy").format(found.getNgaySinh()) + "): ");
+                ngaySinh = sc.nextLine();
+                if(!ngaySinh.matches("\\d{2}/\\d{2}/\\d{4}")){
+                    System.out.println("Định dạng ngày sinh không hợp lệ.");
+                } else{
+                    break;
+                }
+            }
+            found.setNgaySinh(ngaySinh);
+
+            
+            String gioiTinh = "";
+            while(true){
+                System.out.print("Nhập giới tính mới(Nam/Nữ, hiện tại: " + found.getGioiTinh() + "): ");
+                gioiTinh = sc.nextLine();
+                if(!gioiTinh.equalsIgnoreCase("Nam") && !gioiTinh.equalsIgnoreCase("Nữ")){
+                    System.out.println("Giới tính không hợp lệ.");
+                } else{
+                    break;
+                }
+            }
+            found.setGioiTinh(gioiTinh);
+
+            writePhiCongToFile();
             System.out.println("Chỉnh sửa phi công thành công!");
-        } else {
+        } else{
             System.out.println("Không tìm thấy phi công với mã đã nhập.");
         }
     }
 
-    private void writePhiCongToFile() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
-            for (PhiCong phiCong : phiCongList) {
-                writer.write(phiCong.getMaPhiCong() + "," + phiCong.getTenPhiCong());
-                writer.newLine();
+    public void deletePhiCong(){
+        int maPhiCong = 0;
+        boolean validInput = false;
+
+
+        while(!validInput){
+            try{
+                System.out.print("Nhập mã phi công cần xóa: ");
+                maPhiCong = sc.nextInt();sc.nextLine();
+
+                validInput = true;
+            } catch(InputMismatchException e){
+                System.out.println("Mã phi công phải là một số nguyên.");
+                sc.nextLine();
             }
-        } catch (IOException e) {
-            System.out.println("Lỗi khi ghi thông tin phi công: " + e.getMessage());
+        }
+
+        PhiCong found = null;
+        for(PhiCong phiCong : pclist){
+            if(phiCong.getMaPhiCong() == maPhiCong){
+                found = phiCong;
+                break;
+            }
+        }
+
+        if(found != null){
+            pclist.remove(found);
+            writePhiCongToFile();
+            System.out.println("Xóa phi công thành công!");
+        } else{
+            System.out.println("Không tìm thấy phi công với mã đã nhập.");
         }
     }
 
-    private void readPhiCongFromFile() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+
+
+    private void writePhiCongToFile(){
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))){
+            for(PhiCong phiCong : pclist){
+                writer.write(phiCong.getMaPhiCong() + "," +
+                        phiCong.getTenPhiCong() + "," +
+                        phiCong.getLuong() + "," +
+                        new SimpleDateFormat("dd/MM/yyyy").format(phiCong.getNgaySinh()) + "," +
+                        phiCong.getGioiTinh());
+                writer.newLine();
+            }
+        } catch(IOException e){
+            System.out.println("Lỗi: " + e.getMessage());
+        }
+    }
+
+
+    private void readPhiCongFromFile(){
+        try(BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))){
             String line;
-            while ((line = reader.readLine()) != null) {
+            while((line = reader.readLine()) != null){
                 String[] data = line.split(",");
-                if (data.length == 2) {
-                    PhiCong phiCong = new PhiCong(Integer.parseInt(data[0]), data[1]);
-                    phiCongList.add(phiCong);
+                if(data.length == 5){
+                    try{
+                        PhiCong phiCong = new PhiCong(
+                                Integer.parseInt(data[0]),       // maPhiCong
+                                data[1],                         // tenPhiCong
+                                Double.parseDouble(data[2]),     // luong
+                                data[3],                         // ngaySinh
+                                data[4]                          // gioiTinh
+                        );
+                        pclist.add(phiCong);
+                    } catch(NumberFormatException e){
+                        System.out.println("Lỗi định dạng trong tệp: " + line);
+                    }
                 }
             }
-        } catch (IOException e) {
+        } catch(IOException e){
             System.out.println("Lỗi khi đọc thông tin phi công: " + e.getMessage());
         }
     }
+    public PhiCong timPhiCongTheoMa(int maPhiCong){
+        for(PhiCong phiCong : pclist){
+            if(phiCong.getMaPhiCong() == maPhiCong){
+                return phiCong;
+            }
+        }
+        return null;
+    }
+
 }
