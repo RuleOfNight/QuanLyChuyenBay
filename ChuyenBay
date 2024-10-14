@@ -3,7 +3,7 @@ package entity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChuyenBay{
+public class ChuyenBay {
     private int maChuyenBay;
     private String ngayGioBay;
     private String diemDen;
@@ -13,12 +13,12 @@ public class ChuyenBay{
     private List<PhiCong> pclist;
     private List<TiepVien> tvlist;
 
-    public ChuyenBay(){
+    public ChuyenBay() {
         this.pclist = new ArrayList<>();
         this.tvlist = new ArrayList<>();
     }
 
-    public ChuyenBay(int maChuyenBay,String ngayGioBay,String diemDen,String gioDiChuyen,int soGhe,String hangMayBay){
+    public ChuyenBay(int maChuyenBay, String ngayGioBay, String diemDen, String gioDiChuyen, int soGhe, String hangMayBay) {
         this();
         this.maChuyenBay = maChuyenBay;
         this.ngayGioBay = ngayGioBay;
@@ -28,83 +28,83 @@ public class ChuyenBay{
         this.hangMayBay = hangMayBay;
     }
 
-    public int getMaChuyenBay(){
+    public int getMaChuyenBay() {
         return maChuyenBay;
     }
 
-    public void setMaChuyenBay(int maChuyenBay){
+    public void setMaChuyenBay(int maChuyenBay) {
         this.maChuyenBay = maChuyenBay;
     }
 
-    public String getNgayGioBay(){
+    public String getNgayGioBay() {
         return ngayGioBay;
     }
 
-    public void setNgayGioBay(String ngayGioBay){
+    public void setNgayGioBay(String ngayGioBay) {
         this.ngayGioBay = ngayGioBay;
     }
 
-    public String getDiemDen(){
+    public String getDiemDen() {
         return diemDen;
     }
 
-    public void setDiemDen(String diemDen){
+    public void setDiemDen(String diemDen) {
         this.diemDen = diemDen;
     }
 
-    public String getGioDiChuyen(){
+    public String getGioDiChuyen() {
         return gioDiChuyen;
     }
 
-    public void setGioDiChuyen(String gioDiChuyen){
+    public void setGioDiChuyen(String gioDiChuyen) {
         this.gioDiChuyen = gioDiChuyen;
     }
 
-    public int getSoGhe(){
+    public int getSoGhe() {
         return soGhe;
     }
-    public void setSoGhe(int soGhe){
+
+    public void setSoGhe(int soGhe) {
         this.soGhe = soGhe;
     }
-    public String getHangMayBay(){
+
+    public String getHangMayBay() {
         return hangMayBay;
     }
-    
-    public void setHangMayBay(String hangMayBay){
+
+    public void setHangMayBay(String hangMayBay) {
         this.hangMayBay = hangMayBay;
     }
 
-    public List<PhiCong> getPhiCongList(){
+    public List<PhiCong> getPhiCongList() {
         return pclist;
     }
 
-    public void setPhiCongList(List<PhiCong> phiCongList){
+    public void setPhiCongList(List<PhiCong> phiCongList) {
         this.pclist = phiCongList;
     }
 
-    public List<TiepVien> getTiepVienList(){
+    public List<TiepVien> getTiepVienList() {
         return tvlist;
     }
 
-    public void setTiepVienList(List<TiepVien> tiepVienList){
+    public void setTiepVienList(List<TiepVien> tiepVienList) {
         this.tvlist = tiepVienList;
     }
 
-
-
-
-    public void addPhiCong(PhiCong phiCong){
-        this.pclist.add(phiCong);
+    public void addPhiCong(PhiCong phiCong) {
+        if (!pclist.contains(phiCong)) {
+            this.pclist.add(phiCong);
+        }
     }
 
-    public void addTiepVien(TiepVien tiepVien){
-        this.tvlist.add(tiepVien);
+    public void addTiepVien(TiepVien tiepVien) {
+        if (!tvlist.contains(tiepVien)) {
+            this.tvlist.add(tiepVien);
+        }
     }
 
-
-    
-
-    public void displayChuyenBayInfo(){
+    public void displayChuyenBayInfo() {
         System.out.println("Mã chuyến bay: " + maChuyenBay +
                 ", Ngày giờ bay: " + ngayGioBay +
                 ", Điểm đến: " + diemDen +
@@ -113,16 +113,15 @@ public class ChuyenBay{
                 ", Hãng máy bay: " + hangMayBay);
 
         System.out.println("=== Danh sách phi công ===");
-        for (PhiCong phiCong : pclist){
+        for (PhiCong phiCong : pclist) {
             System.out.println("Mã phi công: " + phiCong.getMaPhiCong() +
                     ", Tên phi công: " + phiCong.getTenPhiCong());
         }
 
         System.out.println("=== Danh sách tiếp viên ===");
-        for (TiepVien tiepVien : tvlist){
+        for (TiepVien tiepVien : tvlist) {
             System.out.println("Mã tiếp viên: " + tiepVien.getMaTiepVien() +
                     ", Tên tiếp viên: " + tiepVien.getTenTiepVien());
         }
     }
 }
-
