@@ -1,0 +1,20 @@
+231,2024-10-15 08:30,New York,10:00,150,VietNam Airline
+232,2024-10-15 09:00,Los Angeles,11:30,200,Bamboo Airways
+233,2024-10-15 09:45,Chicago,12:15,180,Qatar Airways
+234,2024-10-15 10:15,Houston,13:00,170,United Airlines
+235,2024-10-15 11:00,Tokyo,14:45,160,Vietnam Airlines 
+236,2024-10-15 11:30,San Francisco,15:20,190,Vietjet Air
+237,2024-10-15 12:00,Las Vegas,16:00,200,Vietravel Airlines 
+238,2024-10-15 12:30,Hồ Chí Minh,16:45,155,Vietravel Airlines 
+239,2024-10-15 13:00,Đà Nẵng,17:30,145,Vietravel Airlines 
+240,2024-10-15 13:45,Đà Lạt,18:00,175,Bamboo Airways
+241,2024-10-15 14:15,Atlanta,19:30,165,VietNam Airline
+242,2024-10-15 15:00,Phoenix,20:15,180,Qatar Airways
+243,2024-10-15 15:30,Hồ Chí Minh,21:00,150,Vietjet Air
+244,2024-10-15 16:00,San Diego,22:45,160,Air China
+245,2024-10-15 16:45,Orlando,23:30,170,Air China
+246,2024-10-15 17:15,Hồ Chí Minh,24:15,200,Bamboo Airways
+247,2024-10-15 17:45,Charlotte,25:00,180,VietNam Airline
+248,2024-10-15 18:00,Nha Trang,26:15,160,Bamboo Airways
+249,2024-10-15 18:30,Tampa,27:00,190,United Airlines
+250,2024-10-15 19:00,Washington D.C.,28:15,175,VietNam Airline
